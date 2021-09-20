@@ -91,3 +91,17 @@ void print(studentas& kin) {
         << left        << setw(20)        << std::setprecision(3) << kin.galutinis
         << endl;
 }
+
+
+
+float mediana(vector<float> vec) {
+    typedef vector<float>::size_type vecSize;
+    vecSize size = vec.size();
+    if (size == 0)
+        throw std::domain_error("Negalima skaiciuoti medianos tusciam vektoriui");
+    sort(vec.begin(), vec.end());
+    vecSize vid = size / 2;
+    return size % 2 == 0 ? (vec[vid] + vec[vid - 1]) / 2 : vec[vid];
+
+
+}
