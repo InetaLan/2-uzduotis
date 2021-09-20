@@ -24,9 +24,6 @@ void pildymas(studentas& kint); // Funkcijos prototipas, kuris turi būti apraš
 void print(studentas& kin);
 
 
-
-
-
 int main()
 {
     studentas studentai[30];
@@ -50,7 +47,6 @@ int main()
 
 }
 
-
 //Funkcijos kūnas;
 void pildymas(studentas& kint) {
 
@@ -72,11 +68,7 @@ void pildymas(studentas& kint) {
         cin >> kint.nd[i];
         sum += kint.nd[i];
     };
-
-    cout << "Iveskite pazymius: " << endl;
-    while(!(cin>>kint.nd) || kint.nd <1 || kint.nd>10)
-
-
+    
     vid = sum / n;
 
     cout << "Iveskite egzamino pazymi: "; 
