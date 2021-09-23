@@ -15,7 +15,7 @@ struct studentas {
     string vardas, pavarde;
     float  nd[10]{};
     //Tarkime, kad namų darbų daugiausiai gali būti 10 - 
-    // toėl renkamės statinį masyvą ir nurodome masyvo dydį [10]
+    // todėl renkamės statinį masyvą ir nurodome masyvo dydį [10]
     float egz;
     float galutinis;
 };
@@ -51,6 +51,7 @@ int main()
 void pildymas(studentas& kint) {
 
     cout << "Iveskite studento varda ir pavarde: "; cin >> kint.vardas >> kint.pavarde;
+    
     int n; //Namų darbų skaičius
     float sum = 0, vid = 0; //Sum-> namų darbų suma, vid-> namų darbų vidurkis;
 
@@ -65,7 +66,15 @@ void pildymas(studentas& kint) {
 
     cout << "Iveskite pazymius: " << endl;
     for (int i = 0; i < n; i++) {
-        cin >> kint.nd[i];
+        
+        while (!(cin >> kint.nd[i]) || kint.nd[i] < 1 || kint.nd[i] > 10)
+        {
+            cout << "Ivesta negalima reiksme - patikslinkite." << endl;
+            cout << "Iveskite pazymius: " << endl;
+            cin.clear();
+            cin.ignore();
+        }
+        
         sum += kint.nd[i];
     };
     
