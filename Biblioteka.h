@@ -20,10 +20,31 @@ class Studentas
 private:
     std::string Vardas_;
     std::string Pavarde_;
+    double* elem;
     std::vector<int> ND_;
     int Egzaminas_;
 public:
-    Studentas() : ND_(0) { };
+    Studentas() : ND_(0), elem(new double[ND_]) { };
+    ~Studentas() { delete[] &ND_; } // Destruktorius
+    Studentas(const Studentas& s):elem{ new double[s.ND_] }, ND_(s.ND_) // Kopijavimo konstruktorius
+    {
+        for (int i = 0; i != ND_; ++i)
+            elem[i] = s.elem[i];
+    }
+
+    Studentas& operator=(const Studentas& s) // Priskyrimo operatorius
+    {
+        if (&s == this) return *this;
+
+        double* p = new double[s.ND_];
+        for (int i = 0; i != s.ND_; ++i)
+            p[i] = s.elem[i];
+        delete[] elem;
+        elem = p;
+        ND_ = s.ND_;
+        return *this;
+    }
+
     void setStudentas(std::string, std::string, std::string);
     void SetND(int);
     void EmptyND();
