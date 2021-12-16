@@ -1,151 +1,161 @@
-#include "biblioteka.h"
+#include "Biblioteka.h"
+#include <random>
 
+Person::Person() {}
 
-void Studentas::setStudentas(std::string vardas_, std::string pavarde_, std::string Egzaminas)
+Person::Person(string Vardas, string Pavarde)
 {
-    Vardas_ = vardas_;
-    Pavarde_ = pavarde_;
-    Egzaminas_ = std::stoi(Egzaminas);
+
+    Vardas_ = Vardas;
+    Pavarde_ = Pavarde;
 }
 
-void Studentas::SetND(int Score)
-{
-    ND_.push_back(Score);
-}
+Person::~Person() {}
 
 
-void Studentas::EmptyND()
-{
-    ND_.clear();
-}
+Studentas::Studentas(const Studentas& OldClass) {
+    Vardas_ = OldClass.Vardas_;
+    Pavarde_ = OldClass.Pavarde_;
+    ND = OldClass.ND;
+    Egzaminas = OldClass.Egzaminas;
+    Vidurkis = OldClass.Vidurkis;
+    Mediana = OldClass.Mediana;
+    FinalMediana = OldClass.FinalMediana;
+    FinalVidurkis = OldClass.FinalVidurkis;
 
-double Studentas::GP(int Exam, double HomeworkScore)
-{
-    return 0.4 * HomeworkScore + 0.6 * Exam;
-}
-
-double Studentas::GP(int Exam, const std::vector<int> Homework)
-{
-    if (ND_.size() == 0)
-        throw std::domain_error("Studentas neatliko nei vieno namu darbo.");
-    return GP(Egzaminas_, Vidurkis(ND_));
-}
-
-double Studentas::GP(double (*Criteria)(std::vector<int>))
-{
-    return GP(Egzaminas_, Criteria(ND_));
 }
 
 
-double Vidurkis(std::vector<int> HomeworkScore)
+Studentas::Studentas()
 {
-    if (HomeworkScore.size() == 0)
-        throw std::domain_error("Skaiciavimo atlikti negalima. Iveskite duomenis.");
+    int Egzaminas = 0;
+    double Vidurkis = 0.0;
+    double Mediana = 0.0;
+    double FMediana = 0.0;
+    double FVidurkis = 0.0;
+}
 
-    return std::accumulate(HomeworkScore.begin(), HomeworkScore.end(), 0.0) / HomeworkScore.size();
+Studentas::~Studentas() {}
+
+void Studentas::setVardas(string Vardas)
+{
+    Vardas_ = Vardas;
+}
+
+void Studentas::setPavarde(string Pavarde)
+{
+    Pavarde_ = Pavarde;
+}
+
+void Studentas::setND(vector <double> ND_)
+{
+    ND = ND_;
+}
+
+void Studentas::setEgzaminas(int Egzaminas_)
+{
+    Egzaminas = Egzaminas_;
+}
+
+int Studentas::getEgzaminas() const
+{
+    return Egzaminas;
+}
+
+string Studentas::getVardas() const
+{
+    return Vardas_;
+}
+
+string Studentas::getPavarde() const
+{
+    return Pavarde_;
+}
+
+double Studentas::getFinalVidurkis() const
+{
+    return FinalVidurkis;
+}
+
+double Studentas::getFinalMediana() const
+{
+    return FinalMediana;
 }
 
 
-double Mediana(std::vector<int> HomeworkScore)
+Studentas& Studentas::operator=(const Studentas& s)
 {
-    typedef std::vector <int>::size_type VecSize;
-    VecSize size = HomeworkScore.size();
+    if (&s == this)
+        return *this;
+    Vardas_ = s.getVardas();
+    Pavarde_ = s.getPavarde();
+    FinalMediana = s.getFinalMediana();
+    FinalVidurkis = s.getFinalVidurkis();
+    return *this;
+}
 
-    if (size == 0)
-        throw std::domain_error("Skaiciavimo atlikti negalima. Iveskite duomenis.");
-
-    sort(HomeworkScore.begin(), HomeworkScore.end());
-
-    VecSize Middle = size / 2;
-
-    if (size % 2 == 0)
-        return (HomeworkScore[Middle - 1] + HomeworkScore[Middle]) / 2;
+bool Studentas::operator<(const Studentas& s2)
+{
+    if (Vardas_ != s2.getVardas())
+        return Vardas_ < s2.getVardas();
     else
-        return HomeworkScore[Middle];
+        return Pavarde_ < s2.getPavarde();
 }
 
-
-bool Lyginimas(const Studentas& x, const Studentas& y)
+bool Studentas::operator>(const Studentas& s2)
 {
-    return x.getSurname() < y.getSurname();
+    if (Vardas_ != s2.getVardas())
+        return Vardas_ > s2.getVardas();
+    else
+        return Pavarde_ > s2.getPavarde();
 }
 
-bool Raides(std::string Input)
+bool Studentas::operator==(const Studentas& s2)
 {
-    for (int i = 0; i < Input.length(); i++)
+    if (Vardas_ == s2.getVardas() &&
+        Pavarde_ == s2.getPavarde() &&
+        FinalMediana == s2.getFinalMediana() &&
+        FinalVidurkis == s2.getFinalVidurkis())
     {
-        if (isalpha(Input[i]) == false)
-            return false;
+        return true;
     }
-    return true;
 }
 
-
-bool Skaiciai(const std::string& str)
+bool Studentas::operator!=(const Studentas& s2)
 {
-    return all_of(str.begin(), str.end(), ::isdigit);
-}
-
-void DidRaid(std::string& Text)
-{
-    if (islower(Text.at(0)))
-        Text.at(0) = toupper(Text.at(0));
-
-    for (int i = 1; i < Text.length(); i++)
-        if (isupper(Text.at(i)))
-            Text.at(i) = tolower(Text.at(i));
-}
-
-
-void SpausdintiLentele(std::ostream& out, std::string::size_type x, std::string::size_type y)
-{
-    out << "Vardas" << std::string(x - 5, ' ')
-        << "Pavarde" << std::string(y - 6, ' ') << "Galutinis pazymys" << std::endl;
-
-    auto Spaces = x + y + 18;
-    for (auto i = 0; i <= Spaces; i++)
-        out << "-";
-    out << std::endl;
-}
-
-
-void SpausdintiVidurki(std::string::size_type x, std::string::size_type y)
-{
-    std::cout << "Vardas" << std::string(x - 5, ' ')
-        << "Pavarde" << std::string(y - 6, ' ') << "Galutinis pazymys (vid.)" << std::endl;
-
-    auto Spaces = x + y + 24;
-    for (auto i = 0; i <= Spaces; i++)
-        std::cout << "-";
-    std::cout << std::endl;
-}
-
-
-void SpausdintiMediana(std::string::size_type x, std::string::size_type y)
-{
-    std::cout << "Vardas" << std::string(x - 5, ' ')
-        << "Pavarde" << std::string(y - 6, ' ') << "Galutinis pazymys (med.)" << std::endl;
-
-    auto Spaces = x + y + 24;
-    for (auto i = 0; i <= Spaces; i++)
-        std::cout << "-";
-    std::cout << std::endl;
-}
-
-
-void Spausdinti(std::ostream& out, std::vector<Studentas> Main, std::string::size_type x, std::string::size_type y)
-{
-    for (std::vector<Studentas>::iterator IT = Main.begin(); IT != Main.end(); IT++)
+    if (Vardas_ != s2.getVardas() ||
+        Pavarde_ != s2.getPavarde() ||
+        FinalMediana != s2.getFinalMediana() ||
+        FinalVidurkis != s2.getFinalVidurkis())
     {
-        out << (*IT).getName() << std::string(x + 1 - (*IT).getName().size(), ' ');
-        out << (*IT).getSurname() << std::string(y + 1 - (*IT).getSurname().size(), ' ');
-        std::streamsize prec = std::cout.precision();
-        out << std::fixed << std::setprecision(2) << (*IT).GP(Vidurkis) << " "
-            << (*IT).GP(Mediana) << std::setprecision(prec) << std::endl;
+        return false;
     }
-    for (auto i = 0; i != x + y + 10; i++)
-        out << "-";
-    out << std::endl;
+
+
+}
+
+void Studentas::skaiciavimas()
+{
+
+    sort(ND.begin(), ND.end());
+    int position = ND.size();
+
+    if (position % 2 == 0)
+    {
+        Mediana = ((ND.at(position / 2)) + (ND.at(position / 2 - 1))) / 2;
+    }
+    else
+    {
+        Mediana = ND.at(position / 2);
+    }
+    FinalMediana = (0.4 * Mediana) + (0.6 * Egzaminas);
+
+    for (int j = 0; j < ND.size(); j++)
+    {
+        Vidurkis += ND.at(j);
+    }
+    Vidurkis = Vidurkis / ND.size();
+    FinalVidurkis = (0.4 * Vidurkis) + (0.6 * Egzaminas);
 }
 
 void Generavimas(std::size_t i)
@@ -162,8 +172,7 @@ void Generavimas(std::size_t i)
 
     for (size_t j = 1; j <= NumberOfStudents; j++)
     {
-        Write << "Vardas" + std::to_string(j) << " Pavarde" + std::to_string(j) << " " << Interval(eng);
-
+        Write << "Vardas" << j << " Pavarde" << j << " " << Interval(eng);
         std::vector <int> Results;
         std::vector <int>::iterator IT;
 
@@ -177,14 +186,257 @@ void Generavimas(std::size_t i)
     }
     Write.close();
 }
+
+void Nuskaitymas(vector<Studentas>& Stud, string filename)
+{
+
+    std::ifstream in(filename);
+
+    string a;
+    int Homeworksum = 0;
+    int l{};
+    Studentas Data;
+
+    string Vardas, Pavarde;
+    int egzaminas;
+
+    vector<double> ND1;
+
+
+    if (!in)
+    {
+        cout << "Duomenu failas neegzistuoja" << endl;
+        exit(0);
+    }
+
+    in >> a >> a >> a;
+    while (a[0] == 'N')
+    {
+        Homeworksum++;
+        in >> a;
+    }
+
+    while (!in.eof())
+    {
+        in >> Vardas >> Pavarde;
+
+        Data.setVardas(Vardas);
+        Data.setPavarde(Pavarde);
+
+        for (int i = 0; i < Homeworksum; i++)
+            in >> i;
+        if ((l < 0) || (l > 10))
+        {
+            l = 0;
+            cout << "Pazymiuose rasta klaida" << endl;
+        }
+        ND1.push_back(l);
+    }
+    in >> egzaminas;
+    Data.setEgzaminas(egzaminas);
+
+    Data.setND(ND1);
+    Stud.push_back(Data);
+    ND1.clear();
+
+
+    in.close();
+
+}
+
+void Ivedimas(vector <Studentas>& Stud)
+{
+
+    int  n, l, egzaminas, pasirinkimas, k;
+    string ka;
+    string  Vardas, Pavarde;
+    vector<double> ND1;
+
+    cout << "Kiek mokiniu bus?" << endl;
+label1:
+    cin >> k;
+    if (k > 0)
+    {
+        Studentas Data;
+        for (int i = 0; i < k; i++)
+        {
+            cout << "Iveskite studento varda ir pavarde:" << endl;
+            cin >> Vardas;
+            Data.setVardas(Vardas);
+            cin >> Pavarde;
+            Data.setPavarde(Pavarde);
+            cout << "Ar norite jog rezultatai butu sugeneruoti atsitiktinai (1) ar norite irasyti pats/pati?(0)" << endl;
+            cin >> pasirinkimas;
+
+
+            if (pasirinkimas == 0)
+            {
+                cout << "Iveskite studento egzamino rezultata:" << endl;
+            label2:
+                cin >> egzaminas;
+                if (egzaminas > 0 and egzaminas < 11)
+                    Data.setEgzaminas(egzaminas);
+                else
+                {
+                    cout << "Toks pasirinkimas negalimas, bandykite dar karta";
+                    goto label2;
+                }
+                cout << "Iveskite studento namu darbu pazymiu skaiciu" << endl;
+            label3:
+                cin >> n;
+                if (egzaminas > 0)
+                {
+                    cout << "Iveskite pazymius " << endl;
+                    for (int j = 0; j < n; j++)
+                    {
+                    label4:
+                        cin >> l;
+                        if (l > 0 and l < 11)
+                        {
+                            ND1.push_back(l);
+                        }
+                        else
+                        {
+                            cout << "Toks pasirinkimas negalimas, bandykite dar karta ";
+                            goto label4;
+                        }
+                    }
+                }
+                else
+                {
+                    cout << "Toks pasirinkimas negalimas, bandykite dar karta";
+                    goto label3;
+                }
+            }
+
+
+            else if (pasirinkimas == 1)
+            {
+                srand(time(0));
+                Data.setEgzaminas((1 + rand() % 10));
+                cout << "Iveskite studento namu darbu pazymiu skaiciu:" << endl;
+                cin >> n;
+
+                for (int j = 0; j < n; j++)
+                {
+                    l = (1 + rand() % 10);
+                    ND1.push_back(l);
+                }
+            }
+
+        }
+        Data.setND(ND1);
+        Stud.push_back(Data);
+        ND1.clear();
+    }
+    else
+    {
+        cout << "Bandykite dar karta" << endl;
+        goto label1;
+    }
+
+}
+
+
+
+void Skaiciavimai(vector <Studentas>& Stud)
+{
+
+
+    for (int i = 0; i < Stud.size(); i++)
+    {
+
+        Stud.at(i).skaiciavimas();
+
+    }
+}
+
+
+
+
+
+bool Kvaili1(Studentas& Stud)
+{
+    return (Stud.getFinalVidurkis() > 5);
+}
+
+bool Kvaili2(Studentas& Stud)
+{
+    return (Stud.getFinalMediana() > 5);
+}
+
+void GeneravimasOutputFiles(vector <Studentas>& Stud, vector <Studentas>& Kvaili, vector <Studentas>& Protingi, int t)
+{
+
+
+    if (t == 0)
+    {
+
+        std::remove_copy_if(Stud.begin(), Stud.end(), std::back_inserter(Kvaili), Kvaili1);
+        std::copy_if(Stud.begin(), Stud.end(), std::back_inserter(Protingi), Kvaili1);
+
+        Stud.erase(Stud.begin(), Stud.end());
+
+    }
+
+    else
+    {
+
+        std::remove_copy_if(Stud.begin(), Stud.end(), std::back_inserter(Kvaili), Kvaili2);
+        std::copy_if(Stud.begin(), Stud.end(), std::back_inserter(Protingi), Kvaili2);
+
+        Stud.erase(Stud.begin(), Stud.end());
+    }
+
+}
+void Spausdinimas(vector <Studentas>& Stud, int t, string text)
+{
+
+
+    std::ofstream in(text);
+
+    in << left << setw(25) << "Vardas:" << left << setw(30) << "Pavarde:";
+    if (t == 1)
+    {
+        in << "Mediana" << endl;
+    }
+    else if (t == 2)
+    {
+        in << "Vidurkis" << " Mediana" << endl;
+    }
+    else
+    {
+        in << "Vidurkis" << endl;
+    }
+
+    for (int i = 0; i < Stud.size(); i++)
+    {
+
+        in << left << setw(25) << Stud.at(i).getVardas() << left << setw(30) << Stud.at(i).getPavarde();
+        if (t != 1)
+        {
+            in << left << setw(9) << setprecision(3) << Stud.at(i).getFinalVidurkis();
+        }
+
+        if (t != 0)
+        {
+            in << left << setw(9) << setprecision(2) << Stud.at(i).getFinalMediana();
+        }
+
+        in << endl;
+    }
+    in.close();
+
+}
+
 int Pasirinkimas()
 {
     std::string Entry;
     int EntryChoice;
     std::cout << "Kaip norite gauti stendentu duomenis?\n Spauskite:"
-        "\n1. jeigu norite duomenis nuskaityti is failo 'kursiokai.txt',"
-        "\n2. jeigu norite duomenis ivesti pats/pati"
-        "\n3. jeigu norite nuskaityti duomenis is sugeneruotu failu" << std::endl;
+        "\n1. Jeigu norite duomenis nuskaityti is failo 'kursiokai.txt'"
+        "\n2. Jeigu norite duomenis ivesti pats/pati"
+        "\n3. Jeigu norite skaityti duomenis is sugeneruotu failu" << std::endl;
 
     while (std::cin >> Entry)
     {
@@ -204,7 +456,8 @@ int Pasirinkimas()
             break;
         }
         else
-            std::cout << Error << std::endl;
-    }std::cin.ignore();
+            std::cout << "Klaida" << std::endl;
+    }
+    std::cin.ignore();
     return EntryChoice;
 }

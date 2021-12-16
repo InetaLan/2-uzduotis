@@ -1,78 +1,79 @@
-#ifndef BIBLIOTEKA_H_INCLUDED
-#define BIBLIOTEKA_H_INCLUDED
-
-
-#include <string>
-#include <vector>
+#pragma once
 #include <iostream>
-#include <algorithm>
-#include <numeric>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
 #include <chrono>
-#include <random>
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <iomanip>
+#include <ctime>
+#include <fstream>
+#include <stdlib.h>
+#include <iterator>
 
-const std::string Error = "Duomenys neatitinka reikalavimu. Bandukite dar karta.";
+using std::cout;
+using std::endl;
+using std::cin;
+using std::string;
+using std::vector;
+using std::sort;
+using std::setprecision;
+using std::setw;
+using std::left;
 
-class Studentas
+class Person
 {
-private:
-    std::string Vardas_;
-    std::string Pavarde_;
-    double* elem;
-    std::vector<int> ND_;
-    int Egzaminas_;
+
+protected:
+    string Vardas_;
+    string Pavarde_;
+
 public:
-    Studentas() : ND_(0), elem(new double[ND_]) { };
-    Studentas(std::initializer_list<double> il) //Initializer-list konstruktorius
-        : ND_{ static_cast<int>(il.size()) },
-        elem{ new double[il.size()] }
-    {
-        std::copy(il.begin(), il.end(), elem);
-    }
-    ~Studentas() { delete[] &ND_; } // Destruktorius
-    Studentas(const Studentas& s):elem{ new double[s.ND_] }, ND_(s.ND_) // Kopijavimo konstruktorius
-    {
-        for (int i = 0; i != ND_; ++i)
-            elem[i] = s.elem[i];
-    }
-
-    Studentas& operator=(const Studentas& s) // Priskyrimo operatorius
-    {
-        if (&s == this) return *this;
-
-        double* p = new double[s.ND_];
-        for (int i = 0; i != s.ND_; ++i)
-            p[i] = s.elem[i];
-        delete[] elem;
-        elem = p;
-        ND_ = s.ND_;
-        return *this;
-    }
-
-    void setStudentas(std::string, std::string, std::string);
-    void SetND(int);
-    void EmptyND();
-    std::string getName() const { return Vardas_; }
-    std::string getSurname() const { return Pavarde_; }
-    int GautiEgzamina() const { return Egzaminas_; }
-    int GautiDydi() const { return ND_.size(); }
-    double GP(int, double);
-    double GP(int, const std::vector<int>);
-    double GP(double (*) (std::vector<int>));
+    Person(string, string);
+    Person();
+    ~Person();
+    virtual void setVardas(string) = 0;
+    virtual void setPavarde(string) = 0;
+    string getVardas() const;
+    string getPavarde() const;
 };
 
-double Vidurkis(std::vector<int>);
-double Mediana(std::vector<int>);
-bool Lyginimas(const Studentas&, const Studentas&);
-bool Raides(std::string);
-bool Skaiciai(const std::string&);
-void DidRaid(std::string&);
-void SpausdintiLentele(std::ostream&, std::string::size_type, std::string::size_type);
-void SpausdintiVidurki(std::string::size_type, std::string::size_type);
-void SpausdintiMediana(std::string::size_type, std::string::size_type);
-void Spausdinti(std::ostream&, std::vector<Studentas>, std::string::size_type, std::string::size_type);
-void Generavimas(std::size_t);
+class Studentas : public Person
+{
+
+public:
+    Studentas();
+    ~Studentas();
+    void setVardas(string);
+    void setPavarde(string);
+    void setND(vector <double>);
+    void setEgzaminas(int);
+    string getVardas() const;
+    string getPavarde() const;
+    int getEgzaminas() const;
+    double getFinalMediana() const;
+    double getFinalVidurkis() const;
+    Studentas& operator=(const Studentas& stud);
+    bool operator<(const Studentas& s2);
+    bool operator>(const Studentas& s2);
+    bool operator!=(const Studentas& s2);
+    bool operator==(const Studentas& s2);
+    void skaiciavimas();
+    Studentas(const Studentas&);
+private:
+    vector<double> ND;
+    int Egzaminas;
+    double Vidurkis;
+    double Mediana;
+    double FinalMediana;
+    double FinalVidurkis;
+};
+void Generavimas(std::size_t i);
+void Nuskaitymas(vector<Studentas>& Stud, string filename);
+void Ivedimas(vector <Studentas>& Stud);
+void Skaiciavimai(vector <Studentas>& Stud);
+bool Kvaili1(Studentas& Stud);
+bool Kvaili2(Studentas& Stud);
+void GeneravimasOutputFiles(vector <Studentas>& Stud, vector <Studentas>& Kvaili, vector <Studentas>& Protingi, int t);
+void Spausdinimas(vector <Studentas>& Stud, int t, string text);
+bool Skaiciai(const std::string& str);
 int Pasirinkimas();
-#endif
