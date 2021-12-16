@@ -1,2 +1,2 @@
-# 1.2-uzduotis
-Turimai klasei studentas realizuoti *Rule of three* kontruktoriai (Destruktorius,Kopijavimo konstruktorius,Priskyrimo operatorius) taip pat ir Initializer-list konstruktorius.
+# 1.5-uzduotis
+Vietoje turimos vienos Studentas klasės sukurtos dvi: bazinė klasė - *class Person*, skirta bendrai aprašyti žmogų ir jos išvestinė (derived) klasė - *class Studentas*.
